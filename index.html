@@ -143,27 +143,36 @@
   <audio data-key="80" src="sounds/dubbyBeat.wav"></audio>
 
 <script>
-
-  function playSound(e) {
-    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
-    const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
-    if (!audio) return; //stop function from running altogether
-    audio.currentTime = 0; // rewind to the start
+  function playSound(keyCode) {
+    const audio = document.querySelector(`audio[data-key="${keyCode}"]`);
+    const key = document.querySelector(`.key[data-key="${keyCode}"]`);
+    if (!audio) return;
+    audio.currentTime = 0;
     audio.play();
     key.classList.add('playing');
   }
 
-  function removeTransition(e) {
-    if (e.propertyName !== 'transform') return; // skip if it's not a transform
+  function handleClick(e) {
+    const keyCode = e.currentTarget.getAttribute('data-key');
+    playSound(keyCode);
+  }
 
+  function handleKeydown(e) {
+    playSound(e.keyCode);
+  }
+
+  function removeTransition(e) {
+    if (e.propertyName !== 'transform') return;
     this.classList.remove('playing');
   }
 
   const keys = document.querySelectorAll('.key');
-  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+  keys.forEach(key => {
+    key.addEventListener('transitionend', removeTransition);
+    key.addEventListener('click', handleClick);
+  });
 
-  window.addEventListener("keydown", playSound);
-
+  window.addEventListener('keydown', handleKeydown);  
 </script>
 
 
